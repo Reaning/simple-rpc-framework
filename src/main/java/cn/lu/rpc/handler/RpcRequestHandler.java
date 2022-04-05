@@ -23,7 +23,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessageReq
         RpcMessageResponse response = new RpcMessageResponse();
         response.setSequenceId(rpcMessageRequest.getSequenceId());
         response.setMessageType(Message.RPC_MESSAGE_RESPONSE);
-        response.setResult(new Object[]{"123"});
+        response.setResult("123");
         response.setException(null);
         channelHandlerContext.writeAndFlush(response);
     }

@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class RpcMessageResponse extends Message{
 
-    private Object[] result;
+    private Object result;
     private Exception exception;
 
     @Override

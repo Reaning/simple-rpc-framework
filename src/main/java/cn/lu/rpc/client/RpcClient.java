@@ -1,22 +1,19 @@
 package cn.lu.rpc.client;
 
-import cn.lu.rpc.entity.Message;
+import cn.lu.rpc.Service.HelloService;
 import cn.lu.rpc.entity.RpcMessageRequest;
+import cn.lu.rpc.handler.RpcResponseHandler;
 import cn.lu.rpc.protocol.FrameDecoder;
 import cn.lu.rpc.protocol.MessageCodec;
 import cn.lu.rpc.protocol.SequenceNum;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LoggingHandler;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
+import io.netty.util.concurrent.DefaultPromise;
 import java.lang.reflect.Proxy;
 
 /**
@@ -54,7 +51,8 @@ public class RpcClient {
                         protected void initChannel(SocketChannel channel) throws Exception {
                             channel.pipeline().addLast(new FrameDecoder())
                                     .addLast(new LoggingHandler())
-                                    .addLast(new MessageCodec());
+                                    .addLast(new MessageCodec())
+                                    .addLast(new RpcResponseHandler());
                         }
                     }).connect("localhost", 8090).sync().channel();
             channel.closeFuture().addListener(future -> {
@@ -65,11 +63,12 @@ public class RpcClient {
         return channel;
     }
 
-    public static Object getProxy(Class<?> clazz){
+    public static<T> T getProxy(Class<T> clazz){
         Class<?>[] classes = {clazz};
-        Proxy.newProxyInstance(clazz.getClassLoader(), classes, (obj,method,args)->{
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), classes, (obj, method, args) -> {
+            Integer sequenceNum = SequenceNum.getSequenceNum();
             RpcMessageRequest request = new RpcMessageRequest(
-                    SequenceNum.getSequenceNum(),
+                    sequenceNum,
                     clazz.getName(),
                     method.getName(),
                     method.getReturnType(),
@@ -77,15 +76,16 @@ public class RpcClient {
                     args
             );
             getChannel().writeAndFlush(request);
-
+            DefaultPromise<Object> promise = new DefaultPromise<>(channel.eventLoop());
+            SequenceNum.invokeResultMap.put(sequenceNum,promise);
+            promise.sync();
+            Object now = promise.getNow();
+            return now;
         });
     }
 
     public static void main(String[] args) {
-
-
+        HelloService hello = getProxy(HelloService.class);
+        String hello1 = hello.hello();
     }
-
-
-
 }

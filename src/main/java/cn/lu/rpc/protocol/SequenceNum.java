@@ -1,5 +1,9 @@
 package cn.lu.rpc.protocol;
 
+import io.netty.util.concurrent.Promise;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,4 +21,5 @@ public abstract class SequenceNum {
         return SEQUENCE_CREATOR.getAndIncrement();
     }
 
+    public static final Map<Integer, Promise<Object>> invokeResultMap = new HashMap<>();
 }

@@ -1,5 +1,6 @@
 package cn.lu.rpc.server;
 
+import cn.lu.rpc.handler.RpcRequestHandler;
 import cn.lu.rpc.protocol.FrameDecoder;
 import cn.lu.rpc.protocol.MessageCodec;
 import io.netty.bootstrap.ServerBootstrap;
@@ -33,7 +34,8 @@ public class RpcServer {
                             channel.pipeline()
                                     .addLast(new FrameDecoder())
                                     .addLast(new LoggingHandler(LogLevel.DEBUG))
-                                    .addLast(new MessageCodec());
+                                    .addLast(new MessageCodec())
+                                    .addLast(new RpcRequestHandler());
                         }
                     })
                     .bind(8090)
