@@ -1,6 +1,6 @@
-package cn.lu.rpc.Service.impl;
+package cn.lu.rpc.service.impl;
 
-import cn.lu.rpc.Service.HelloService;
+import cn.lu.rpc.service.HelloService;
 
 /**
  * cn.lu.rpc.Service.impl

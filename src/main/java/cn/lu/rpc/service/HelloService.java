@@ -1,4 +1,4 @@
-package cn.lu.rpc.Service;
+package cn.lu.rpc.service;
 
 /**
  * cn.lu.rpc.Service

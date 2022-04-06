@@ -1,6 +1,6 @@
 package cn.lu.rpc.client;
 
-import cn.lu.rpc.Service.HelloService;
+import cn.lu.rpc.service.HelloService;
 import cn.lu.rpc.entity.RpcMessageRequest;
 import cn.lu.rpc.handler.RpcResponseHandler;
 import cn.lu.rpc.protocol.FrameDecoder;
