@@ -2,7 +2,6 @@ package cn.lu.rpc.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.util.Properties;
 
 /**
@@ -13,10 +12,10 @@ import java.util.Properties;
  * @email lkxbruce@gmail.com
  * @project simple-gpc-framework
  */
-public class Config {
+public class ClientConfig {
     public static Properties properties;
     static{
-        try(InputStream in = Config.class.getResourceAsStream("/application.properties")){
+        try(InputStream in = ClientConfig.class.getResourceAsStream("/application.properties")){
             properties = new Properties();
             properties.load(in);
         } catch (IOException e) {

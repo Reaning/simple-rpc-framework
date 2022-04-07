@@ -1,9 +1,11 @@
 package cn.lu.rpc.registry.impl;
 
 import cn.lu.rpc.registry.ServiceRegistry;
+import cn.lu.rpc.service.HelloService;
 import cn.lu.rpc.utils.CuratorUtils;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 
@@ -19,12 +21,13 @@ public class ServiceRegistryImpl implements ServiceRegistry {
     @Override
     public void registry(String serviceName, String hostAddress) {
         String path = "/" + serviceName + "/" + hostAddress;
-        CuratorUtils.addPersistentNode(path);
+        CuratorUtils.addNode(path);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, IOException {
         ServiceRegistry serviceRegistry = new ServiceRegistryImpl();
-        serviceRegistry.registry("cn.lu.HelloService","120.1.1.0:8080");
+        serviceRegistry.registry(HelloService.class.getName(),"127.0.0.1:8080");
+        System.in.read();
     }
 
 }

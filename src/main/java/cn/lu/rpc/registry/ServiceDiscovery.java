@@ -1,7 +1,5 @@
 package cn.lu.rpc.registry;
 
-import java.net.InetSocketAddress;
-
 /**
  * cn.lu.rpc.registry
  *
@@ -11,5 +9,5 @@ import java.net.InetSocketAddress;
  * @project simple-gpc-framework
  */
 public interface ServiceDiscovery {
-    InetSocketAddress discover(String serviceName);
+    String discover(String serviceName);
 }

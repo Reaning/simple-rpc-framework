@@ -3,7 +3,7 @@ package cn.lu.rpc.registry.impl;
 import cn.lu.rpc.registry.ServiceDiscovery;
 import cn.lu.rpc.utils.CuratorUtils;
 
-import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * cn.lu.rpc.registry.impl
@@ -15,7 +15,9 @@ import java.net.InetSocketAddress;
  */
 public class ServiceDiscoveryImpl implements ServiceDiscovery {
     @Override
-    public InetSocketAddress discover(String serviceName) {
-        InetSocketAddress inetSocketAddress = CuratorUtils.getService(serviceName);
+    public String discover(String serviceName) {
+//        InetSocketAddress inetSocketAddress = CuratorUtils.getService(serviceName);
+        List<String> service = CuratorUtils.getService(serviceName);
+        return service.get(0);
     }
 }

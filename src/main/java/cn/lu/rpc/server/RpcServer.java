@@ -38,7 +38,7 @@ public class RpcServer {
                                     .addLast(new RpcRequestHandler());
                         }
                     })
-                    .bind(8090)
+                    .bind(8080)
                     .sync()
                     .channel();
             serverChannel.closeFuture().sync();
