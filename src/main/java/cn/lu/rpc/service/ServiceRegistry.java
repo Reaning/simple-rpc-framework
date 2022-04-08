@@ -1,6 +1,4 @@
-package cn.lu.rpc.registry;
-
-import java.net.InetSocketAddress;
+package cn.lu.rpc.service;
 
 /**
  * cn.lu.rpc.registry

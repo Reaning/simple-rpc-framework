@@ -1,12 +1,14 @@
 package cn.lu.rpc.utils;
 
 import cn.lu.rpc.config.ClientConfig;
+import cn.lu.rpc.service.LoadBalance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,7 @@ public class CuratorUtils {
     public static volatile CuratorFramework service;
     public static final Set<String> PATH_SET = ConcurrentHashMap.newKeySet();
     public static final Map<String,List<String>> SERVICE_ADDRESS_MAP= new ConcurrentHashMap<>();
+//    private static final Map<String, LoadBalance> LOAD_BALANCE_MAP = new ConcurrentHashMap<>();
 //    public static final
 
     static{

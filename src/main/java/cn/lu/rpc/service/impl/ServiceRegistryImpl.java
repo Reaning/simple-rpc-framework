@@ -1,13 +1,10 @@
-package cn.lu.rpc.registry.impl;
+package cn.lu.rpc.service.impl;
 
-import cn.lu.rpc.registry.ServiceRegistry;
-import cn.lu.rpc.service.HelloService;
+import cn.lu.rpc.service.ServiceRegistry;
+import cn.lu.rpc.example.HelloService;
 import cn.lu.rpc.utils.CuratorUtils;
-import org.apache.curator.framework.CuratorFrameworkFactory;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.Arrays;
 
 /**
  * cn.lu.rpc.registry.impl

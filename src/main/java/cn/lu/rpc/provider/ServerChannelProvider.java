@@ -1,12 +1,9 @@
 package cn.lu.rpc.provider;
 
+import cn.lu.rpc.config.ServerConfig;
 import cn.lu.rpc.handler.RpcRequestHandler;
-import cn.lu.rpc.handler.RpcResponseHandler;
 import cn.lu.rpc.protocol.FrameDecoder;
 import cn.lu.rpc.protocol.MessageCodec;
-import cn.lu.rpc.registry.ServiceDiscovery;
-import cn.lu.rpc.registry.impl.ServiceDiscoveryImpl;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -15,12 +12,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * cn.lu.rpc.provider
@@ -31,34 +25,32 @@ import java.util.concurrent.ConcurrentHashMap;
  * @project simple-gpc-framework
  */
 public class ServerChannelProvider {
-    private static final Map<String, Channel> PATH_CHANNEL_MAP = new ConcurrentHashMap<>();
-    private static final ServiceDiscovery serviceDiscovery = new ServiceDiscoveryImpl();
+    private static Channel channel;
 
 
     public static Channel getChannel(String serviceName){
-        if(PATH_CHANNEL_MAP.containsKey(serviceName)){
-            Channel channel = PATH_CHANNEL_MAP.get(serviceName);
-            if(channel == null || !channel.isActive()){
-                PATH_CHANNEL_MAP.remove(serviceName);
-                return newChannel(serviceName);
-            }
+        if(channel != null){
             return channel;
-        }else{
-            return newChannel(serviceName);
+        }
+        synchronized (ServerChannelProvider.class){
+            if(channel != null){
+                return channel;
+            }
+            return newChannel();
         }
     }
 
-    public static Channel newChannel(String serviceName){
-        String path = serviceDiscovery.discover(serviceName);
-        String[] servicePath = path.split(":");
-        return newChannel(serviceName,servicePath[0],Integer.parseInt(servicePath[1]));
+    private static Channel newChannel(){
+        int port = Integer.parseInt(ServerConfig.getLocalIp().split(":")[1]);
+        return newChannel(port);
     }
 
-    public static Channel newChannel(String serviceName,String host,int port){
+    private static Channel newChannel(int port){
         NioEventLoopGroup boss = new NioEventLoopGroup();
         NioEventLoopGroup worker = new NioEventLoopGroup();
+        Channel serverChannel = null;
         try {
-            Channel serverChannel = new ServerBootstrap()
+            serverChannel = new ServerBootstrap()
                     .group(boss, worker)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -71,7 +63,7 @@ public class ServerChannelProvider {
                                     .addLast(new RpcRequestHandler());
                         }
                     })
-                    .bind(8080)
+                    .bind(port)
                     .sync()
                     .channel();
             serverChannel.closeFuture().addListener(new ChannelFutureListener() {
@@ -84,5 +76,6 @@ public class ServerChannelProvider {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return serverChannel;
     }
 }

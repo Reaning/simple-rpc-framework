@@ -1,7 +1,7 @@
 package cn.lu.rpc.client;
 
 import cn.lu.rpc.proxy.RpcClientProxy;
-import cn.lu.rpc.service.HelloService;
+import cn.lu.rpc.example.HelloService;
 
 /**
  * cn.lu.gpc.client
