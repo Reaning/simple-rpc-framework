@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class CuratorUtils {
 
-    public static volatile CuratorFramework service;
-    public static final Set<String> PATH_SET = ConcurrentHashMap.newKeySet();
-    public static final Map<String,List<String>> SERVICE_ADDRESS_MAP= new ConcurrentHashMap<>();
+    private static volatile CuratorFramework service;
+    private static final Set<String> PATH_SET = ConcurrentHashMap.newKeySet();
+    private static final Map<String,List<String>> SERVICE_ADDRESS_MAP= new ConcurrentHashMap<>();
 //    private static final Map<String, LoadBalance> LOAD_BALANCE_MAP = new ConcurrentHashMap<>();
 //    public static final
 

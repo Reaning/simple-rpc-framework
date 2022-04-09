@@ -1,16 +1,18 @@
 package cn.lu.rpc.server;
 
+import cn.lu.rpc.annotation.RpcScan;
+import cn.lu.rpc.example.HelloService;
 import cn.lu.rpc.handler.RpcRequestHandler;
 import cn.lu.rpc.protocol.FrameDecoder;
 import cn.lu.rpc.protocol.MessageCodec;
+import cn.lu.rpc.provider.ServerChannelProvider;
+import cn.lu.rpc.service.impl.ServiceRegistryImpl;
+import cn.lu.rpc.utils.CuratorUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.io.IOException;
 
 /**
  * cn.lu.gpc.server
@@ -20,33 +22,19 @@ import io.netty.handler.logging.LoggingHandler;
  * @email lkxbruce@gmail.com
  * @project simple-gpc-framework
  */
+@RpcScan(basePackage = {"cn.lu.rpc"})
 public class RpcServer {
     public static void main(String[] args) {
-        NioEventLoopGroup boss = new NioEventLoopGroup();
-        NioEventLoopGroup worker = new NioEventLoopGroup();
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(RpcServer.class);
+//        context.getBean("")
+
         try {
-            Channel serverChannel = new ServerBootstrap()
-                    .group(boss, worker)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel channel) throws Exception {
-                            channel.pipeline()
-                                    .addLast(new FrameDecoder())
-                                    .addLast(new LoggingHandler(LogLevel.DEBUG))
-                                    .addLast(new MessageCodec())
-                                    .addLast(new RpcRequestHandler());
-                        }
-                    })
-                    .bind(8080)
-                    .sync()
-                    .channel();
-            serverChannel.closeFuture().sync();
-        } catch (InterruptedException e) {
+            Channel channel = ServerChannelProvider.getChannel();
+//            new ServiceRegistryImpl().registry(HelloService.class.getName(),8080);
+            System.in.read();
+            channel.close();
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            boss.shutdownGracefully();
-            worker.shutdownGracefully();
         }
     }
 }

@@ -4,6 +4,7 @@ import cn.lu.rpc.config.ServerConfig;
 import cn.lu.rpc.handler.RpcRequestHandler;
 import cn.lu.rpc.protocol.FrameDecoder;
 import cn.lu.rpc.protocol.MessageCodec;
+import cn.lu.rpc.utils.CuratorUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -25,10 +26,10 @@ import io.netty.handler.logging.LoggingHandler;
  * @project simple-gpc-framework
  */
 public class ServerChannelProvider {
-    private static Channel channel;
+    private static Channel channel = null;
 
 
-    public static Channel getChannel(String serviceName){
+    public static Channel getChannel(){
         if(channel != null){
             return channel;
         }
@@ -48,9 +49,8 @@ public class ServerChannelProvider {
     private static Channel newChannel(int port){
         NioEventLoopGroup boss = new NioEventLoopGroup();
         NioEventLoopGroup worker = new NioEventLoopGroup();
-        Channel serverChannel = null;
         try {
-            serverChannel = new ServerBootstrap()
+            channel = new ServerBootstrap()
                     .group(boss, worker)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -66,16 +66,14 @@ public class ServerChannelProvider {
                     .bind(port)
                     .sync()
                     .channel();
-            serverChannel.closeFuture().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                    boss.shutdownGracefully();
-                    worker.shutdownGracefully();
-                }
+            channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
+                boss.shutdownGracefully();
+                worker.shutdownGracefully();
+                CuratorUtils.closeClient();
             });
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return serverChannel;
+        return channel;
     }
 }

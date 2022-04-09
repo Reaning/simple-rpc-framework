@@ -5,6 +5,8 @@ import cn.lu.rpc.example.HelloService;
 import cn.lu.rpc.utils.CuratorUtils;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * cn.lu.rpc.registry.impl
@@ -16,14 +18,20 @@ import java.io.IOException;
  */
 public class ServiceRegistryImpl implements ServiceRegistry {
     @Override
-    public void registry(String serviceName, String hostAddress) {
-        String path = "/" + serviceName + "/" + hostAddress;
+    public void registry(String serviceName, int port) {
+        String host = null;
+        try {
+            host = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        String path = "/" + serviceName + "/" + host + ":" + port;
         CuratorUtils.addNode(path);
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
         ServiceRegistry serviceRegistry = new ServiceRegistryImpl();
-        serviceRegistry.registry(HelloService.class.getName(),"127.0.0.1:8080");
+        serviceRegistry.registry(HelloService.class.getName(),8080);
         System.in.read();
     }
 

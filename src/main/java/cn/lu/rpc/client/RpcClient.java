@@ -1,5 +1,6 @@
 package cn.lu.rpc.client;
 
+import cn.lu.rpc.annotation.RpcScan;
 import cn.lu.rpc.proxy.RpcClientProxy;
 import cn.lu.rpc.example.HelloService;
 
@@ -11,6 +12,7 @@ import cn.lu.rpc.example.HelloService;
  * @email lkxbruce@gmail.com
  * @project simple-gpc-framework
  */
+@RpcScan(basePackage = {"cn.lu.rpc"})
 public class RpcClient {
 
     public static void main(String[] args) {

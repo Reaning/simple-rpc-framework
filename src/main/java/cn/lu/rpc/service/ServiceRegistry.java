@@ -9,5 +9,5 @@ package cn.lu.rpc.service;
  * @project simple-gpc-framework
  */
 public interface ServiceRegistry {
-    void registry(String serviceName, String hostAddress);
+    void registry(String serviceName, int port) ;
 }

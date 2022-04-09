@@ -1,5 +1,6 @@
 package cn.lu.rpc.example.impl;
 
+import cn.lu.rpc.annotation.RpcService;
 import cn.lu.rpc.example.HelloService;
 
 /**
@@ -10,6 +11,7 @@ import cn.lu.rpc.example.HelloService;
  * @email lkxbruce@gmail.com
  * @project simple-gpc-framework
  */
+@RpcService(beanName = "hello")
 public class HelloServiceImpl implements HelloService {
     @Override
     public String hello() {
