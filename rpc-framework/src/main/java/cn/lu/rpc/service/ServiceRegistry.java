@@ -1,5 +1,7 @@
 package cn.lu.rpc.service;
 
+import cn.lu.rpc.entity.ServiceMetaData;
+
 /**
  * cn.lu.cn.lu.rpc.registry
  *
@@ -9,5 +11,6 @@ package cn.lu.rpc.service;
  * @project simple-gpc-framework
  */
 public interface ServiceRegistry {
-    void registry(String serviceName, int port) ;
+    void registry(ServiceMetaData serviceMetaData) ;
+    Object getService(String serviceName);
 }

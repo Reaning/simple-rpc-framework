@@ -2,11 +2,13 @@ package cn.lu.rpc.spring;
 
 import cn.lu.rpc.annotation.RpcReference;
 import cn.lu.rpc.annotation.RpcService;
+import cn.lu.rpc.entity.ServiceMetaData;
 import cn.lu.rpc.proxy.RpcClientProxy;
 import cn.lu.rpc.service.ServiceRegistry;
 import cn.lu.rpc.service.impl.ServiceRegistryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
@@ -23,15 +25,24 @@ import java.lang.reflect.Field;
 @Component
 @Slf4j
 public class SpringBeanPostProcessor implements BeanPostProcessor {
+
+    @Autowired
+    private ServiceRegistry serviceRegistry;
+
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         // 在初始化之前注册Service到Zookeeper
         if(bean.getClass().isAnnotationPresent(RpcService.class)){
             log.debug("[{}] is annotated with [{}]",bean.getClass().getName(),RpcService.class.getName());
-            ServiceRegistry serviceRegistry = new ServiceRegistryImpl();
             for(Class<?> interfaceName : bean.getClass().getInterfaces()){
                 // 注册接口
-                serviceRegistry.registry(interfaceName.getName(),8080);
+                ServiceMetaData serviceMetaData = ServiceMetaData.builder()
+                        .serviceName(interfaceName.getName())
+                        .service(bean)
+                        .port(8080)
+                        .build();
+                serviceRegistry.registry(serviceMetaData);
             }
         }
         return bean;
